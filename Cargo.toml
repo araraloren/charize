@@ -1,0 +1,16 @@
+[package]
+name = "charize"
+version = "0.0.1"
+authors = ["araraloren <blackcatoverwall@gmail.com>"]
+edition = "2021"
+license = "MPL-2.0"
+description = "Provide a simple proc macro convert token to char."
+repository = "https://github.com/araraloren/charize/"
+keywords = ["proc-macro", "neure"]
+categories = ["parsing"]
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+proc-macro = true
