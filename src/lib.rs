@@ -25,7 +25,6 @@ use proc_macro::TokenTree;
 
 #[proc_macro]
 pub fn charize(input: TokenStream) -> TokenStream {
-    dbg!(&input);
     let mut iter = input.into_iter();
     let token = iter.next().expect("Except token to charize!");
 
