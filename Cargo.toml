@@ -1,7 +1,9 @@
 [package]
 name = "charize"
-version = "0.0.2"
-authors = ["araraloren <blackcatoverwall@gmail.com>"]
+version = "0.0.3"
+authors = [
+    "araraloren <blackcatoverwall@gmail.com>",
+]
 edition = "2021"
 license = "MPL-2.0"
 description = "Provide a simple proc macro convert token to char."

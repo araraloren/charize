@@ -18,43 +18,51 @@
 //! ## LICENSE
 //!
 //! MPL-2.0
-//! 
+//!
 use proc_macro::Literal;
 use proc_macro::TokenStream;
 use proc_macro::TokenTree;
 
 #[proc_macro]
 pub fn charize(input: TokenStream) -> TokenStream {
+    let mut ch = None;
     let mut iter = input.into_iter();
-    let token = iter.next().expect("Except token to charize!");
 
-    debug_assert!(iter.next().is_none(), "Not support multiple characters");
-    let ch = match token {
-        TokenTree::Ident(ident) => {
-            let ident = ident.to_string();
-            let mut chars = ident.chars();
-            let ch = chars.next().unwrap();
+    while ch.is_none() {
+        if let Some(token) = iter.next() {
+            debug_assert!(
+                iter.next().is_none(),
+                "Charize not support multiple characters"
+            );
+            match &token {
+                TokenTree::Ident(ident) => {
+                    let ident = ident.to_string();
+                    let mut chars = ident.chars();
 
-            debug_assert_eq!(chars.count(), 0, "Charize only support one character");
-            ch
+                    ch = chars.next();
+                    debug_assert_eq!(chars.count(), 0, "Charize only support one character");
+                }
+                TokenTree::Punct(punct) => {
+                    ch = Some(punct.as_char());
+                }
+                TokenTree::Literal(lit) => {
+                    let lit = lit.to_string();
+                    let mut chars = lit.chars();
+
+                    ch = chars.next();
+                    debug_assert_eq!(chars.count(), 0, "Charize only support one character");
+                }
+                TokenTree::Group(group) => {
+                    iter = group.stream().into_iter();
+                }
+            }
         }
-        TokenTree::Punct(punct) => punct.as_char(),
-        TokenTree::Literal(lit) => {
-            let lit = lit.to_string();
-            let mut chars = lit.chars();
-            let ch = chars.next().unwrap();
+    }
 
-            debug_assert_eq!(chars.count(), 0, "Charize only support one character");
-            ch
-        }
-        _ => {
-            panic!("Charize only support Ident or Punct")
-        }
-    };
+    let mut token = TokenStream::new();
+    let value = ch.expect("Charize expect token to charize!");
+    let tree = TokenTree::Literal(Literal::character(value));
 
-    let mut token_stream = TokenStream::new();
-    let tree = TokenTree::Literal(Literal::character(ch));
-
-    token_stream.extend([tree]);
-    token_stream
+    token.extend([tree]);
+    token
 }
